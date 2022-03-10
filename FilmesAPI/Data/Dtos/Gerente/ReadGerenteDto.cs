@@ -10,6 +10,8 @@ namespace FilmesApi.Data.Dtos.Gerente
     {
         public int Id { get; set; }
         public string Nome { get; set; }
-        public List<Cinema> Cinemas { get; set; }
+
+        //Passa um objeto anômimo para usar no automapper para ignorar algumas props
+        public object Cinemas { get; set; }
     }
 }
