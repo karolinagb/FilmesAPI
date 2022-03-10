@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace FilmesAPI.Models
 {
@@ -18,5 +19,8 @@ namespace FilmesAPI.Models
 
         [Range(1, 600, ErrorMessage = "A duração deve ter no mínimo 1 minuto e no máximo 600.")]
         public int Duracao { get; set; }
+
+        //public virtual List<Cinema> Cinemas { get; set; }
+        public virtual List<Sessão> Sessões { get; set; }
     }
 }
