@@ -18,6 +18,6 @@ namespace FilmesAPI.Models
         public int GerenteId { get; set; }
 
         //public virtual List<Filme> Filmes { get; set; }
-        public virtual List<Sessão> Sessões { get; set; }
+        public virtual List<Sessao> Sessões { get; set; }
     }
 }

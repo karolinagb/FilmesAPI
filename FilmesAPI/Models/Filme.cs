@@ -21,6 +21,6 @@ namespace FilmesAPI.Models
         public int Duracao { get; set; }
 
         //public virtual List<Cinema> Cinemas { get; set; }
-        public virtual List<Sessão> Sessões { get; set; }
+        public virtual List<Sessao> Sessões { get; set; }
     }
 }

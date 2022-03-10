@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FilmesAPI.Models
 {
-    public class Sessão
+    public class Sessao
     {
         [Key]
         [Required]
