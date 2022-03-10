@@ -10,5 +10,6 @@ namespace FilmesApi.Data.Dtos.Gerente
     {
         public int Id { get; set; }
         public string Nome { get; set; }
+        public List<Cinema> Cinemas { get; set; }
     }
 }
