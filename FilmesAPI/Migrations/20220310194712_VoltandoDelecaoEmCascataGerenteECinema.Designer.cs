@@ -2,14 +2,16 @@
 using FilmesAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FilmesAPI.Migrations
 {
     [DbContext(typeof(FilmeDbContext))]
-    partial class FilmeDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220310194712_VoltandoDelecaoEmCascataGerenteECinema")]
+    partial class VoltandoDelecaoEmCascataGerenteECinema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,7 +114,8 @@ namespace FilmesAPI.Migrations
                     b.HasOne("FilmesApi.Models.Gerente", "Gerente")
                         .WithMany("Cinemas")
                         .HasForeignKey("GerenteId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Endereco");
 
