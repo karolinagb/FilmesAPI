@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using System;
+using System.Text.Json.Serialization;
 
 namespace FilmesAPI
 {
@@ -27,11 +28,8 @@ namespace FilmesAPI
                 .UseMySQL(Configuration
                 .GetConnectionString("FilmeConnection")));
 
-            services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "FilmesAPI", Version = "v1" });
-            });
+            services.AddControllers().AddJsonOptions(x=>
+            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
 
             //Parâmetros = informa que queremos usar o AutoMapper dentro do Assembly da nossa aplicação
             //AppDomain = Domínio da nossa aplicação
@@ -46,8 +44,6 @@ namespace FilmesAPI
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "FilmesAPI v1"));
             }
 
             app.UseHttpsRedirection();

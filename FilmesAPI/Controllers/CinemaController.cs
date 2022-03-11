@@ -41,12 +41,12 @@ namespace FilmesAPI.Controllers
             }
             if (!string.IsNullOrEmpty(nomeDoFilme))
             {
-                //IEnumerable<Cinema> query = from cinema in cinemas
-                //        where cinema.Sessoes.Any(sessao =>
-                //        sessao.Filme.Titulo == nomeDoFilme)
-                //        select cinema;
+                IEnumerable<Cinema> query = from cinema in cinemas
+                                            where cinema.Sessões.Any(sessao =>
+                                            sessao.Filme.Titulo == nomeDoFilme)
+                                            select cinema;
 
-                //cinemas = query.ToList();
+                cinemas = query.ToList();
             }
             List<ReadCinemaDto> readDto = _mapper.Map<List<ReadCinemaDto>>(cinemas);
 

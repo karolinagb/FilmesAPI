@@ -18,6 +18,6 @@ namespace FilmesAPI.Data.Dtos
 
         [Range(1, 600, ErrorMessage = "A duração deve ter no mínimo 1 minuto e no máximo 600.")]
         public int Duracao { get; set; }
-        public DateTime HoraConsulta { get; set; } = DateTime.Now;
+        public int ClassificacaoEtaria { get; set; }
     }
 }
