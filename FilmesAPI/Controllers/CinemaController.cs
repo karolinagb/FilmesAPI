@@ -1,7 +1,7 @@
-﻿using AutoMapper;
-using FilmesAPI.Data;
-using FilmesAPI.Data.Dtos;
+﻿using FilmesAPI.Data.Dtos;
 using FilmesAPI.Models;
+using FilmesAPI.Services;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,69 +12,57 @@ namespace FilmesAPI.Controllers
     [Route("[controller]")]
     public class CinemaController : ControllerBase
     {
-        private FilmeDbContext _context;
-        private IMapper _mapper;
+        private readonly CinemaService _cinemaService;
 
-        public CinemaController(FilmeDbContext context, IMapper mapper)
+        public CinemaController(CinemaService cinemaService)
         {
-            _context = context;
-            _mapper = mapper;
+            _cinemaService = cinemaService;
         }
-  
 
         [HttpPost]
         public IActionResult AdicionaCinema([FromBody] CreateCinemaDto cinemaDto)
         {
-            Cinema cinema = _mapper.Map<Cinema>(cinemaDto);
-            _context.Cinemas.Add(cinema);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(RecuperaCinemasPorId), new { Id = cinema.Id }, cinema);
+            ReadCinemaDto readDto = _cinemaService.AdicionaCinema(cinemaDto);
+
+            return CreatedAtAction(nameof(RecuperaCinemasPorId), new { Id = readDto.Id }, readDto);
         }
 
         [HttpGet]
         public IActionResult RecuperaCinemas([FromQuery] string nomeDoFilme)
         {
-            List<Cinema> cinemas = _context.Cinemas.ToList();
-            if(cinemas == null)
-            {
-                return NotFound();
-            }
-            if (!string.IsNullOrEmpty(nomeDoFilme))
-            {
-                IEnumerable<Cinema> query = from cinema in cinemas
-                                            where cinema.Sessões.Any(sessao =>
-                                            sessao.Filme.Titulo == nomeDoFilme)
-                                            select cinema;
+            List<ReadCinemaDto> readDto = _cinemaService.RecuperaCinemas(nomeDoFilme);
 
-                cinemas = query.ToList();
+            if (readDto != null)
+            {
+                return Ok(readDto);
             }
-            List<ReadCinemaDto> readDto = _mapper.Map<List<ReadCinemaDto>>(cinemas);
 
-            return Ok(readDto);
+            return NotFound("Recurso não encontrado");
         }
 
         [HttpGet("{id}")]
         public IActionResult RecuperaCinemasPorId(int id)
         {
-            Cinema cinema = _context.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-            if(cinema != null)
+            ReadCinemaDto readDto = _cinemaService.RecuperaCinemasPorId(id);
+
+            if (readDto != null)
             {
-                ReadCinemaDto cinemaDto = _mapper.Map<ReadCinemaDto>(cinema);
-                return Ok(cinemaDto);
+                return Ok(readDto);
             }
-            return NotFound();
+
+            return NotFound("Recurso não encontrado");
         }
 
         [HttpPut("{id}")]
         public IActionResult AtualizaCinema(int id, [FromBody] UpdateCinemaDto cinemaDto)
         {
-            Cinema cinema = _context.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-            if(cinema == null)
+            Result resultado = _cinemaService.AtualizarCinema(id, cinemaDto);
+
+            if (resultado.IsFailed)
             {
-                return NotFound();
+                return NotFound("Cinema não encontrado");
             }
-            _mapper.Map(cinemaDto, cinema);
-            _context.SaveChanges();
+
             return NoContent();
         }
 
@@ -82,13 +70,13 @@ namespace FilmesAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeletaCinema(int id)
         {
-            Cinema cinema = _context.Cinemas.FirstOrDefault(cinema => cinema.Id == id);
-            if (cinema == null)
+            Result resultado = _cinemaService.DeletaCinema(id);
+
+            if (resultado.IsFailed)
             {
-                return NotFound();
+                return NotFound("Cinema não encontrado");
             }
-            _context.Remove(cinema);
-            _context.SaveChanges();
+
             return NoContent();
         }
 

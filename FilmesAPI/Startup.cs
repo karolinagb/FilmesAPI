@@ -1,4 +1,5 @@
 using FilmesAPI.Data;
+using FilmesAPI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -28,8 +29,11 @@ namespace FilmesAPI
                 .UseMySQL(Configuration
                 .GetConnectionString("FilmeConnection")));
 
+            services.AddScoped<FilmeService, FilmeService>();
+            services.AddScoped<CinemaService, CinemaService>();
+
             services.AddControllers().AddJsonOptions(x=>
-            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve);
+            x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve); //Ignora a referencia ciclica
 
             //Parâmetros = informa que queremos usar o AutoMapper dentro do Assembly da nossa aplicação
             //AppDomain = Domínio da nossa aplicação

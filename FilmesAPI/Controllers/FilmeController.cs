@@ -1,7 +1,6 @@
-﻿using AutoMapper;
-using FilmesAPI.Data;
-using FilmesAPI.Data.Dtos;
-using FilmesAPI.Models;
+﻿using FilmesAPI.Data.Dtos;
+using FilmesAPI.Services;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,74 +12,55 @@ namespace FilmesAPI.Controllers
     public class FilmeController : ControllerBase
     {
 
-        private readonly FilmeDbContext _context;
-        private readonly IMapper _mapper;
+        private readonly FilmeService _filmeService;
 
-        public FilmeController(FilmeDbContext context, IMapper mapper)
+        public FilmeController(FilmeService filmeService)
         {
-            _context = context;
-            _mapper = mapper;
+            _filmeService = filmeService;
         }
 
         [HttpPost]
         public ActionResult AdicionaFilme([FromBody] CreateFilmeDto filmeDto)
         {
-            var filme = _mapper.Map<Filme>(filmeDto);
-            _context.Filmes.Add(filme);
-            _context.SaveChanges();
-            return CreatedAtAction(nameof(RecuperarFilmesPorId), new { id = filme.Id }, filme);
+            ReadFilmeDto readDto = _filmeService.AdicionaFilme(filmeDto);
+            return CreatedAtAction(nameof(RecuperarFilmesPorId), new { id = readDto.Id }, readDto);
         }
 
         [HttpGet]
         public IActionResult RecuperaFilmes([FromQuery] int? classificacaoEtaria = null)
         {
-            List<Filme> filmes;
-            if (classificacaoEtaria == null)
-            {
-                filmes = _context.Filmes.ToList();
-            }
-            else
-            {
-                filmes = _context
-                .Filmes.Where(filme => filme.ClassificacaoEtaria <= classificacaoEtaria).ToList();
-            }
+            List<ReadFilmeDto> readDto = _filmeService.RecuperaFilmes(classificacaoEtaria);
 
-            if (filmes != null)
+            if(readDto != null)
             {
-                List<ReadFilmeDto> readDto = _mapper.Map<List<ReadFilmeDto>>(filmes);
                 return Ok(readDto);
             }
+          
             return NotFound();
         }
 
         [HttpGet("{id}")]
         public IActionResult RecuperarFilmesPorId(int id)
         {
-            var filme = _context.Filmes.FirstOrDefault(x => x.Id == id);
-            if (filme != null)
+            ReadFilmeDto readDto = _filmeService.RecuperaFilmesPorId(id);
+           
+            if(readDto != null)
             {
-                ReadFilmeDto readFilmeDto = _mapper.Map<ReadFilmeDto>(filme);
-                return Ok(readFilmeDto);
+                return Ok(readDto);
             }
 
-            return NotFound();
+            return NotFound("Recurso não encontrado");
         }
 
         [HttpPut("{id}")]
         public ActionResult AtualizaFilme(int id, [FromBody] UpdateFilmeDto filmeNovo)
         {
-            var filme = _context.Filmes.FirstOrDefault(x => x.Id == id);
+            Result resultado = _filmeService.AtualizaFilme(id, filmeNovo);
 
-            if(filme == null)
+            if (resultado.IsFailed)
             {
-                return NotFound("Recurso não encontrado");
+                return NotFound("Filme não encontrado");
             }
-
-            //filme = _mapper.Map<Filme>(filmeNovo);
-            _mapper.Map(filmeNovo, filme);
-
-            _context.Update(filme);
-            _context.SaveChanges();
 
             return NoContent();
         }
@@ -88,15 +68,12 @@ namespace FilmesAPI.Controllers
         [HttpDelete("{id}")]
         public ActionResult RemoverFilme(int id)
         {
-            var filme = _context.Filmes.FirstOrDefault(x => x.Id == id);
+            Result resultado = _filmeService.RemoverFilme(id);
 
-            if (filme == null)
+            if (resultado.IsFailed)
             {
-                return NotFound("Filme não existe");
+                return NotFound("Filme não encontrado");
             }
-
-            _context.Remove(filme);
-            _context.SaveChanges();
 
             return NoContent();
         }
