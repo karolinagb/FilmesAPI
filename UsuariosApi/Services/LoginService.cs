@@ -36,7 +36,7 @@ namespace UsuariosApi.Services
                 return Result.Ok().WithSuccess(token.Value);
             }
 
-            return Result.Fail("Login Falhou");
+            return Result.Fail(resultIdentity.Result.ToString());
         }
     }
 }
