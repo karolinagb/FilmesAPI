@@ -29,8 +29,8 @@ namespace UsuariosApi.Controllers
             return Ok(resultado.Successes); //Retornando o código de ativação
         }
 
-        [HttpPost("/ativa")]
-        public IActionResult AtivaContaUsuario(AtivaContaRequest request)
+        [HttpGet("/ativa")]
+        public IActionResult AtivaContaUsuario([FromQuery] AtivaContaRequest request)
         {
             Result resultado = _cadastroService.AtivaContaUsuario(request);
 
