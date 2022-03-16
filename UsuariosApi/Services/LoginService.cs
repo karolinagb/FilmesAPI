@@ -30,7 +30,10 @@ namespace UsuariosApi.Services
                     .FirstOrDefault(x =>
                         x.NormalizedUserName == request.UserName.ToUpper());
 
-                var token = _tokenServico.CreateToken(usuario);
+                var token = _tokenServico.CreateToken(usuario, _signInManager
+                    .UserManager.GetRolesAsync(usuario).Result
+                    .FirstOrDefault()
+                    );
 
                 //Returnando Ok e algum valor de suceso junto
                 return Result.Ok().WithSuccess(token.Value);
