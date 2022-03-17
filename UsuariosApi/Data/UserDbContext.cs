@@ -48,6 +48,13 @@ namespace UsuariosApi.Data
 
             //Atribuindo a role ao usuário admin
             builder.Entity<IdentityUserRole<int>>().HasData(new IdentityUserRole<int> { RoleId = 99999, UserId = 99999 });
+
+            builder.Entity<IdentityRole<int>>().HasData(new IdentityRole<int>()
+            {
+                Id = 99997,
+                Name = "regular",
+                NormalizedName = "REGULAR"
+            });
         }
     }
 }

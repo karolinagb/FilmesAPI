@@ -33,6 +33,7 @@ namespace FilmesAPI
                 .GetConnectionString("FilmeConnection")));
 
             services.AddAuthentication(auth =>
+            
             {
                 auth.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 //desafio para validar o token
