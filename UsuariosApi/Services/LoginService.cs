@@ -1,18 +1,18 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.Identity;
-using System;
 using System.Linq;
 using UsuariosApi.Data.Request;
+using UsuariosApi.Models;
 
 namespace UsuariosApi.Services
 {
     public class LoginService
     {
-        private readonly SignInManager<IdentityUser<int>> _signInManager;
+        private readonly SignInManager<CustomIdentityUser> _signInManager;
 
         private readonly TokenService _tokenServico;
 
-        public LoginService(SignInManager<IdentityUser<int>> signInManager, TokenService tokenServico)
+        public LoginService(SignInManager<CustomIdentityUser> signInManager, TokenService tokenServico)
         {
             _signInManager = signInManager;
             _tokenServico = tokenServico;
@@ -44,7 +44,7 @@ namespace UsuariosApi.Services
 
         public Result ResetSenhaUsuario(EfetuaResetRequest request)
         {
-            IdentityUser<int> usuarioIdentity = RecuperaUsuarioPorEmail(request.Email);
+            CustomIdentityUser usuarioIdentity = RecuperaUsuarioPorEmail(request.Email);
 
             var resultadoIdentity = _signInManager.UserManager
                 .ResetPasswordAsync(usuarioIdentity, request.CodigoDeRecuperacao, request.Password).Result;
@@ -60,7 +60,7 @@ namespace UsuariosApi.Services
 
         public Result SolicitaResetSenhaUsuario(SolicitaResetRequest request)
         {
-            IdentityUser<int> usuarioIdentity = RecuperaUsuarioPorEmail(request.Email);
+            CustomIdentityUser usuarioIdentity = RecuperaUsuarioPorEmail(request.Email);
 
             if (usuarioIdentity != null)
             {
@@ -71,7 +71,7 @@ namespace UsuariosApi.Services
             }
             return Result.Fail("Falha ao solicitar redefinição de senha");
         }
-        private IdentityUser<int> RecuperaUsuarioPorEmail(string email)
+        private CustomIdentityUser RecuperaUsuarioPorEmail(string email)
         {
             return _signInManager.UserManager.Users
                           .FirstOrDefault(x => x.Email == email);

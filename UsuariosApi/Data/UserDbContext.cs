@@ -2,10 +2,11 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System;
+using UsuariosApi.Models;
 
 namespace UsuariosApi.Data
 {
-    public class UserDbContext : IdentityDbContext<IdentityUser<int>, IdentityRole<int>, int>
+    public class UserDbContext : IdentityDbContext<CustomIdentityUser, IdentityRole<int>, int>
     {
 
         public UserDbContext(DbContextOptions<UserDbContext> opt) : base(opt)
@@ -17,7 +18,7 @@ namespace UsuariosApi.Data
         {
             base.OnModelCreating(builder);
 
-            IdentityUser<int> admin = new IdentityUser<int>
+            CustomIdentityUser admin = new CustomIdentityUser
             {
                 UserName = "admin",
                 NormalizedUserName = "ADMIN",
@@ -30,13 +31,13 @@ namespace UsuariosApi.Data
                 Id = 99999
             };
 
-            PasswordHasher<IdentityUser<int>> hasher = new PasswordHasher<IdentityUser<int>>();
+            PasswordHasher<CustomIdentityUser> hasher = new PasswordHasher<CustomIdentityUser>();
 
             //HashPassword = gera um hash a partir de uma senha
             admin.PasswordHash = hasher.HashPassword(admin, "Admin123!");
 
             //build desse usuario como uma entidade
-            builder.Entity<IdentityUser<int>>().HasData(admin);
+            builder.Entity<CustomIdentityUser>().HasData(admin);
 
             //Criação da role admin
             builder.Entity<IdentityRole<int>>().HasData(new IdentityRole<int>()
